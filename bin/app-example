@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+printf 'External app command placeholder.\n'

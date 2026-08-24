@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+status=0
+for file in "$@"; do
+  [[ -f $file ]] || {
+    printf 'validate: missing file: %s\n' "$file" >&2
+    status=1
+    continue
+  }
+  while IFS= read -r line; do
+    if [[ $line =~ (^|[^[:alnum:]_])argc_[[:alnum:]_]+ ]]; then
+      case $file in
+      */src/commands/* | */build/*) ;;
+      *)
+        printf 'validate: argc state outside command/build adapter: %s\n' "$file" >&2
+        status=1
+        ;;
+      esac
+    fi
+  done <"$file"
+done
+exit "$status"

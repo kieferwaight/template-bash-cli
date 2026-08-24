@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Homebrew/actions/setup-homebrew@master
+      - run: brew install argc bats-core shellcheck shfmt
+      - run: argc lint
+      - run: argc test
+      - run: argc docs
+      - run: git diff --exit-code -- docs/cli.md
+
+  reproducible:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Homebrew/actions/setup-homebrew@master
+      - run: brew install argc
+      - run: SOURCE_DATE_EPOCH=1704067200 argc build
+      - run: sha256sum dist/bin/app > /tmp/app-first.sha256
+      - run: argc clean
+      - run: SOURCE_DATE_EPOCH=1704067200 argc build
+      - run: sha256sum -c /tmp/app-first.sha256
+

@@ -1,0 +1,9 @@
+{
+  "name": "@kieferwaight/app",
+  "version": "0.1.0",
+  "description": "Compiled Bash CLI application",
+  "bin": { "app": "app" },
+  "files": ["app"],
+  "license": "MIT"
+}
+

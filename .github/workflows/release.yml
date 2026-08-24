@@ -1,0 +1,25 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Homebrew/actions/setup-homebrew@master
+      - run: brew install argc
+      - run: argc build
+      - run: mkdir -p dist/packages && tar -C dist/bin -czf dist/packages/app-${GITHUB_REF_NAME#v}.tar.gz app
+      - run: sha256sum dist/packages/app-${GITHUB_REF_NAME#v}.tar.gz > dist/packages/app-${GITHUB_REF_NAME#v}.tar.gz.sha256
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/packages/app-${GITHUB_REF_NAME#v}.tar.gz
+            dist/packages/app-${GITHUB_REF_NAME#v}.tar.gz.sha256
+            dist/SHA256SUMS
+

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source_file=${1:?assembled source required}
+output=${2:?output required}
+{
+  printf '# CLI Reference\n\n'
+  awk '/^# @(describe|cmd|arg|flag|option|version)/ { sub(/^# /, ""); print "- " $0 }' "$source_file"
+  printf '\nGenerated from source annotations.\n'
+} >"$output"

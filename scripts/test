@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+app="$root/dist/bin/app"
+failures=0
+
+assert_eq() {
+  local expected=$1 actual=$2 label=$3
+  if [[ $expected != "$actual" ]]; then
+    printf 'not ok - %s\nexpected: %q\nactual: %q\n' "$label" "$expected" "$actual" >&2
+    failures=$((failures + 1))
+  else
+    printf 'ok - %s\n' "$label"
+  fi
+}
+
+[[ -x $app ]] || {
+  printf 'test: build first: %s\n' "$app" >&2
+  exit 1
+}
+assert_eq 'app 0.1.0' "$($app --version)" 'compiled app reports version'
+assert_eq app "$($app config get APP_NAME)" 'config get returns stdout data'
+set +e
+$app does-not-exist >/tmp/app-test-out 2>/tmp/app-test-err
+status=$?
+set -e
+assert_eq 2 "$status" 'invalid command returns usage status'
+[[ ! -s /tmp/app-test-out ]] || {
+  printf 'not ok - diagnostics polluted stdout\n' >&2
+  failures=$((failures + 1))
+}
+rm -f /tmp/app-test-out /tmp/app-test-err
+
+if command -v bats >/dev/null 2>&1; then bats "$root/test/unit"; fi
+exit "$failures"
