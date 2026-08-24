@@ -10,8 +10,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: Homebrew/actions/setup-homebrew@master
+      - uses: actions/checkout@v5
+      - uses: Homebrew/actions/setup-homebrew@1f8e202ffddf94def7f42f6fa3a482e821489f9c
       - run: brew install argc
       - run: argc build
       - run: mkdir -p dist/packages && tar -C dist/bin -czf dist/packages/app-${GITHUB_REF_NAME#v}.tar.gz app
@@ -22,4 +22,3 @@ jobs:
             dist/packages/app-${GITHUB_REF_NAME#v}.tar.gz
             dist/packages/app-${GITHUB_REF_NAME#v}.tar.gz.sha256
             dist/SHA256SUMS
-
