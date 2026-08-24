@@ -15,3 +15,4 @@ Runtime baseline: Bash 5.1 or newer. The built executable contains the project-o
 
 See [architecture](docs/architecture.md) and [conventions](docs/conventions.md) for the source and distribution contracts.
 
+The [North Star](docs/north-star.md) defines the project's long-term direction, ownership boundaries, and evidence gates. Significant architectural choices are recorded in the [decision log](docs/decisions/README.md).
