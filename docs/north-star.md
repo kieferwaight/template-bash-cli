@@ -47,6 +47,21 @@ Framework sophistication belongs behind tooling; ordinary application repositori
 
 Use this ownership test: if an application would still need a dependency without bash-cli, it is normally application-owned. If it exists only because the project uses bash-cli, framework/tooling owns it.
 
+## Ecosystem Roles and Command Boundary
+
+The framework ecosystem has three intentionally narrow roles:
+
+| Component | Owns | Does not own |
+| --- | --- | --- |
+| `template-bash-cli` | Bash project contract, deterministic composition, and the canonical artifact | Cross-template lifecycle or public Formula maintenance |
+| Future `bash-cli` | Bash-specific conformance, module resolution, build, validation, test, doctor, and capabilities | Generic project creation and provider policy |
+| `devkit` | Template selection, lifecycle dispatch, and provider/release orchestration | A second Bash compiler or application runtime |
+| `homebrew-tap` | Formula metadata for verified public artifacts | Source builds, project templates, or release orchestration |
+
+`bash-cli` is a working name, not a stable public command surface. `devkit init <template> <project>` is the prospective cross-template creation interface. If devkit offers build/test/publish commands, it must dispatch a declared template contract rather than duplicate the template's implementation.
+
+Defer a public `bash-cli init`, `bash-cli release`, or `bash-cli publish` command until dogfooding proves that it does not overlap with devkit's template-neutral lifecycle role.
+
 ## Stable Contract Candidates
 
 These are candidates for versioned compatibility guarantees; internal implementation remains free to evolve behind them.
@@ -89,8 +104,9 @@ If extraction becomes warranted, preserve ancestry with `git mv`, subtree, or hi
 4. **Manifest and composition** — prove one authoritative metadata model, semantic module resolution, deterministic assembly, and standalone output.
 5. **Progressive scaffolding** — implement minimal `init`; add commands, application dependencies, capabilities, and overrides only when the project earns them.
 6. **Inspectable ownership** — add dependency/capability explanation and `doctor` behavior after an actual resolver exists.
-7. **Distribution** — exercise canonical-artifact installation via curl, npm/npx, Homebrew, APK, and Debian where feasible; generated package files alone are not acceptance evidence.
-8. **Reduction** — compare the original template with a minimal generated application and remove every application file that exists only because framework machinery leaked through.
+7. **Public-source gate** — publish and anonymously verify an immutable public artifact before publishing any distribution metadata.
+8. **Distribution** — exercise canonical-artifact installation via curl, npm/npx, Homebrew, APK, and Debian where feasible; generated package files alone are not acceptance evidence.
+9. **Reduction** — compare the original template with a minimal generated application and remove every application file that exists only because framework machinery leaked through.
 
 Each phase needs a real user/application pressure, contract tests, and a decision-log entry before the next permanent abstraction is adopted.
 
@@ -111,6 +127,8 @@ npm is a development, dependency, and distribution transport—not a runtime req
 Toolchain concealment has a boundary: framework-owned tools should be internally implemented, resolved through a versioned dependency graph, provisioned/cached by tooling, or run in an isolated environment before a host dependency is imposed. Host changes require explicit user action. `doctor` must report unmet requirements with precise remediation.
 
 The canonical executable is the release authority. Package managers may wrap or relocate it, but must not introduce a separate compilation path without a recorded reason. Reproducibility is measured independently for assembly, executable, generated docs/completions, archives, and package contents where ecosystem metadata permits it.
+
+GitHub is the current public source and distribution boundary. Private Gitea may remain an explicit development or legacy provider, but public consumers must never require it. The required order is immutable public artifact, anonymous verification, distribution metadata, then a clean consumer installation test.
 
 ## Decision Discipline
 

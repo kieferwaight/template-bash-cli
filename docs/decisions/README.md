@@ -15,3 +15,4 @@ Decisions are append-only records. A later decision supersedes an earlier one; i
 | ID | Decision | Status |
 | --- | --- | --- |
 | [0001](0001-lineage-and-extraction.md) | Preserve lineage before repository extraction | Accepted |
+| [0002](0002-ecosystem-roles-and-public-distribution.md) | Separate template conformance, lifecycle orchestration, and public distribution | Accepted |

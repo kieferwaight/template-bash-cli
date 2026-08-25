@@ -9,3 +9,4 @@ The template separates four grammars:
 
 Commands in `src/commands/` translate argc state into calls to `app::` libraries. Libraries never depend on argc variables. The assembled script is compiled with argc so the installed executable does not need argc or the source repository.
 
+This repository defines the Bash project and artifact contract. It does not own cross-template lifecycle orchestration or Homebrew Formula maintenance; those roles are described in the [ecosystem map](ecosystem.md).
